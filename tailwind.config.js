@@ -7,5 +7,10 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [require('tailwindcss-textshadow')],
+  plugins: [
+    require('tailwind-scrollbar-hide'),
+    require('tailwind-scrollbar'),
+    require('@tailwindcss/line-clamp'),
+    require('tailwindcss-textshadow'),
+  ],
 }
