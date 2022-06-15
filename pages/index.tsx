@@ -5,28 +5,40 @@ import Banner from "../components/Banner";
 import requests from "../utils/requests";
 import { Movie } from "../typings";
 import Row from "../components/Row";
+import useAuth from "../hooks/useAuth";
+import { useRecoilValue } from "recoil";
 
 interface Props {
   netflixOriginals: Movie[];
   trendingNow: Movie[];
   topRated: Movie[];
   actionMovies: Movie[];
+  animationMovies: Movie[];
   comedyMovies: Movie[];
   horrorMovies: Movie[];
   romanceMovies: Movie[];
   documentaries: Movie[];
+  adventureMovies: Movie[];
+  adventureShows: Movie[];
 }
 
 const Home = ({
   netflixOriginals,
   actionMovies,
   comedyMovies,
+  animationMovies,
   documentaries,
   horrorMovies,
   romanceMovies,
   topRated,
   trendingNow,
+  adventureMovies,
+  adventureShows,
 }: Props) => {
+  const {user, loading} = useAuth();
+  // const showModal = useRecoilValue();
+
+  if (loading) return null
   return (
     <div className="relative h-screen bg-gradient-to-b from-gray-900/10 to-[#010511] lg:h-[140vh]">
       <Head>
@@ -39,11 +51,14 @@ const Home = ({
         <section className="md:space-y-24">
           <Row title="Trending Now" movies={trendingNow} />
           <Row title="Top Rated" movies={topRated} />
+          <Row title="Adventure Tv Shows" movies={adventureShows} />
+          <Row title="Comedies" movies={comedyMovies} />
           <Row title="Action Thrillers" movies={actionMovies} />
           {/* {My List} */}
-          <Row title="Comedies" movies={comedyMovies} />
-          <Row title="Scary Movies" movies={horrorMovies} />
+          <Row title="Animations" movies={animationMovies} />
+          <Row title="War Movies" movies={adventureMovies} />
           <Row title="Romance Movies" movies={romanceMovies} />
+          <Row title="Horror" movies={horrorMovies} />
           <Row title="Documentaries" movies={documentaries} />
         </section>
       </main>
@@ -60,19 +75,25 @@ export const getServerSideProps = async () => {
     trendingNow,
     topRated,
     actionMovies,
+    animationMovies,
     comedyMovies,
     horrorMovies,
     romanceMovies,
     documentaries,
+    adventureMovies,
+    adventureShows,
   ] = await Promise.all([
     fetch(requests.fetchNetflixOriginals).then((res) => res.json()),
     fetch(requests.fetchTrending).then((res) => res.json()),
     fetch(requests.fetchTopRated).then((res) => res.json()),
     fetch(requests.fetchActionMovies).then((res) => res.json()),
+    fetch(requests.fetchAnimations).then((res) => res.json()),
     fetch(requests.fetchComedyMovies).then((res) => res.json()),
     fetch(requests.fetchHorrorMovies).then((res) => res.json()),
     fetch(requests.fetchRomanceMovies).then((res) => res.json()),
     fetch(requests.fetchDocumentaries).then((res) => res.json()),
+    fetch(requests.fetchAdventureMovies).then((res) => res.json()),
+    fetch(requests.fetchAdventureShows).then((res) => res.json()),
   ]);
   return {
     props: {
@@ -80,10 +101,13 @@ export const getServerSideProps = async () => {
       trendingNow: trendingNow.results,
       topRated: topRated.results,
       actionMovies: actionMovies.results,
+      animationMovies: animationMovies.results,
       comedyMovies: comedyMovies.results,
       horrorMovies: horrorMovies.results,
       romanceMovies: romanceMovies.results,
       documentaries: documentaries.results,
+      adventureMovies: adventureMovies.results,
+      adventureShows: adventureShows.results,
     },
   };
 };
