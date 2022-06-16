@@ -1,14 +1,15 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
+import { DocumentData } from "firebase/firestore";
 import { useRef, useState } from "react";
 import { Movie } from "../typings";
 import Thumbnail from "./Thumbnail";
 
 interface Props {
   title: string;
-  movies: Movie[];
+  movies: Movie[] | DocumentData[];
 }
 
-const Row = ({ title, movies }: Props) => {
+function Row({ title, movies }: Props) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [isMoved, setIsMoved] = useState(false);
 
@@ -38,8 +39,8 @@ const Row = ({ title, movies }: Props) => {
           onClick={() => handleClick("left")}
         />
         <div
-          ref={rowRef}
           className="flex items-center space-x-0.5 overflow-x-scroll scrollbar-hide md:space-x-2.5 md:p-2"
+          ref={rowRef}
         >
           {movies.map((movie) => (
             <Thumbnail key={movie.id} movie={movie} />
@@ -52,6 +53,6 @@ const Row = ({ title, movies }: Props) => {
       </div>
     </div>
   );
-};
+}
 
 export default Row;
