@@ -7,6 +7,8 @@ import { Movie } from "../typings";
 import Row from "../components/Row";
 import useAuth from "../hooks/useAuth";
 import { useRecoilValue } from "recoil";
+import { modalState } from "../atoms/modalAtom";
+import Modal from "../components/Modal";
 
 interface Props {
   netflixOriginals: Movie[];
@@ -19,7 +21,6 @@ interface Props {
   romanceMovies: Movie[];
   documentaries: Movie[];
   adventureMovies: Movie[];
-  adventureShows: Movie[];
 }
 
 const Home = ({
@@ -33,12 +34,11 @@ const Home = ({
   topRated,
   trendingNow,
   adventureMovies,
-  adventureShows,
 }: Props) => {
-  const {user, loading} = useAuth();
-  // const showModal = useRecoilValue();
+  const { user, loading } = useAuth();
+  const showModal = useRecoilValue(modalState);
 
-  if (loading) return null
+  if (loading) return null;
   return (
     <div className="relative h-screen bg-gradient-to-b from-gray-900/10 to-[#010511] lg:h-[140vh]">
       <Head>
@@ -51,7 +51,6 @@ const Home = ({
         <section className="md:space-y-24">
           <Row title="Trending Now" movies={trendingNow} />
           <Row title="Top Rated" movies={topRated} />
-          <Row title="Adventure Tv Shows" movies={adventureShows} />
           <Row title="Comedies" movies={comedyMovies} />
           <Row title="Action Thrillers" movies={actionMovies} />
           {/* {My List} */}
@@ -62,7 +61,7 @@ const Home = ({
           <Row title="Documentaries" movies={documentaries} />
         </section>
       </main>
-      {/* {Modal} */}
+      {showModal && <Modal />}
     </div>
   );
 };
@@ -81,7 +80,6 @@ export const getServerSideProps = async () => {
     romanceMovies,
     documentaries,
     adventureMovies,
-    adventureShows,
   ] = await Promise.all([
     fetch(requests.fetchNetflixOriginals).then((res) => res.json()),
     fetch(requests.fetchTrending).then((res) => res.json()),
@@ -93,7 +91,6 @@ export const getServerSideProps = async () => {
     fetch(requests.fetchRomanceMovies).then((res) => res.json()),
     fetch(requests.fetchDocumentaries).then((res) => res.json()),
     fetch(requests.fetchAdventureMovies).then((res) => res.json()),
-    fetch(requests.fetchAdventureShows).then((res) => res.json()),
   ]);
   return {
     props: {
@@ -107,7 +104,6 @@ export const getServerSideProps = async () => {
       romanceMovies: romanceMovies.results,
       documentaries: documentaries.results,
       adventureMovies: adventureMovies.results,
-      adventureShows: adventureShows.results,
     },
   };
 };
